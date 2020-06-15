@@ -29,7 +29,7 @@ stages:
         containerRegistry: 'acrtailspinspacegame.azurecr.io'
         repository: '$(webRepository)'
         command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
+        Dockerfile: 'Tailspin.SpaceGame.Web/Dockerfile'
         buildContext: '$(Build.Repository.LocalPath)'
         tags: '$(tag)'
 
