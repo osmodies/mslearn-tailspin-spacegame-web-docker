@@ -22,11 +22,12 @@ stages:
       dotnetSdkVersion: '3.1.100'
 
     steps:
+
     - task: Docker@2
       displayName: 'Build and push the image to container registry'
       inputs:
-        containerRegistry: 'Container Registry Connection'
-        repository: 'acrtailspinspacegame.azurecr.io'
+        containerRegistry: 'acrtailspinspacegame.azurecr.io'
+        repository: '$(webRepository)'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         buildContext: '$(Build.Repository.LocalPath)'
