@@ -29,6 +29,6 @@ stages:
         scriptLocation: 'inlineScript'
         inlineScript: |
           az group create --name "$(rgName)" --location eastus
-          az acr create --name "$(registryName)" --resource-group $rgName --sku Standard --admin-enabled true
+          az acr create --name "$(registryName)" --resource-group "$(rgName)" --sku Standard --admin-enabled true
           az appservice plan create --name "$(planNameLinux)" --resource-group "$(rgName)" --sku B1 --is-linux
           az webapp create --name "$(webNamelinux)" --resource-group "$(rgName)" --plan "$(planNameLinux)" --deployment-container-image-name $registryName.azurecr.io/web:latest
