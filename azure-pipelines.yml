@@ -24,7 +24,7 @@ stages:
     steps:
     - task: AzureCLI@2
       inputs:
-        azureSubscription: 'VS Ent-MPN- ODIAZ(972e401d-226e-48c7-a463-6d562c39edda)'
+        azureSubscription: 'VS Ent-MPN-ODiaz(972e401d-226e-48c7-a463-6d562c39edda)'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
@@ -58,6 +58,6 @@ stages:
     steps:
     - task: AzureWebAppContainer@1
       inputs:
-        azureSubscription: 'VS Ent-MPN- ODIAZ(972e401d-226e-48c7-a463-6d562c39edda)'
+        azureSubscription: 'VS Ent-MPN-ODiaz(972e401d-226e-48c7-a463-6d562c39edda)'
         appName: '$(webNamelinux)'
         containers: '$(RegistryName)/$(webRepository):$(build.buildId)'
