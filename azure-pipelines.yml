@@ -22,6 +22,17 @@ stages:
       dotnetSdkVersion: '3.1.100'
 
     steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'VS Ent-MPN- ODIAZ(972e401d-226e-48c7-a463-6d562c39edda)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az group create --name "$(rgName)" --location eastus
+          az acr create --name "$(registryName)" --resource-group $rgName --sku Standard --admin-enabled true
+          az appservice plan create --name $(planNameLinux)" --resource-group "$(rgName)" --sku B1 --is-linux
+          az webapp create --name "$(webNamelinux)" --resource-group "$(rgName)" --plan "$(planNameLinux)" --deployment-container-image-name $registryName.azurecr.io/web:latest
+          
     - task: Docker@2
       displayName: 'Build and push the image to container registry'
       inputs:
@@ -33,27 +44,6 @@ stages:
         tags: |
           $(tag)
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'VS Ent-MPN- ODIAZ(972e401d-226e-48c7-a463-6d562c39edda)'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az group create --name "$(rgName)" --location eastus
-          az acr create --name "$(registryName)" --resource-group $rgName --sku Standard --admin-enabled true
-          az appservice plan create --name $(planNameLinux)" --resource-group "$(rgName)" --sku B1 --is-linux
-          az webapp create --name "$(webNamelinux)" --resource-group "$(rgName)" --plan "$(planNameLinux)" --deployment-container-image-name $registryName.azurecr.io/web:latest
-#          az storage account create --name "$(storageName)" --resource-group "$(rgName)" --sku Standard_LRS
-#          az appservice plan create --name "$(planName)" --resource-group "$(rgName)" --sku B1
-#          az functionapp create --name "$(LeaderboardAppName)" --resource-group "$(rgName)" --storage-account $(storageName) --consumption-plan-location eastus
-#          az webapp create --name "$(WebAppNameDev)" --resource-group "$(rgName)" --plan "$(planName)"
-#          az webapp create --name "$(WebAppNameTest)" --resource-group "$(rgName)" --plan "$(planName)"
-#          az webapp create --name "$(WebAppNameStaging)" --resource-group "$(rgName)" --plan "$(planName)"          
-#          az webapp config connection-string set --name "$(WebAppNameDev)" --resource-group "$(rgName)" --settings "DefaultConnection=$DB_CONNECTION_STRING" --connection-string-type SQLAzure
-#          az webapp config connection-string set --name "$(WebAppNameStaging)" --resource-group "$(rgName)" --settings "DefaultConnection=$DB_CONNECTION_STRING" --connection-string-type SQLAzure
-#          az webapp config connection-string set --name "$(WebAppNameTest)" --resource-group "$(rgName)" --settings "DefaultConnection=$DB_CONNECTION_STRING" --connection-string-type SQLAzure
-#          az webapp list   --resource-group "$(rgName)"   --query "[].{hostName: defaultHostName, state: state}"   --output table
-#          az webapp deployment slot create --name "$(WebAppNameStaging)" --resource-group "$(rgName)" --slot swap
 
 
 - stage: 'Deploy'
