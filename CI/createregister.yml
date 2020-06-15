@@ -1,0 +1,46 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+trigger:
+- '*'
+
+variables:
+  buildConfiguration: 'Release'
+  webRepository: 'web'
+  tag: '$(Build.BuildId)'
+
+stages:
+- stage: 'Build'
+  displayName: 'Build the web application'
+  jobs: 
+  - job: 'Build'
+    displayName: 'Build job'
+    pool:
+      vmImage: 'ubuntu-16.04'
+      demands:
+        - npm
+
+    variables:
+      wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
+      dotnetSdkVersion: '3.1.100'
+
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'VS Ent-MPN-ODiaz(972e401d-226e-48c7-a463-6d562c39edda)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az group create --name "$(rgName)" --location eastus
+          az acr create --name "$(registryName)" --resource-group $rgName --sku Standard --admin-enabled true
+          az appservice plan create --name $(planNameLinux)" --resource-group "$(rgName)" --sku B1 --is-linux
+          az webapp create --name "$(webNamelinux)" --resource-group "$(rgName)" --plan "$(planNameLinux)" --deployment-container-image-name $registryName.azurecr.io/web:latest
